@@ -1,7 +1,7 @@
 ﻿
 namespace EnemyTankServices
 {
-    public enum EnemyType 
+    public enum EnemyType : short
     {
         Blue,
         Green,

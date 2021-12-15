@@ -1,6 +1,6 @@
 ﻿namespace PlayerTankServices
 {
-    public enum TankType
+    public enum TankType : short
     {
         Blue,
         Green,

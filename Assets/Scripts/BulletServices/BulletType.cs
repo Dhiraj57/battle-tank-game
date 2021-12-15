@@ -1,6 +1,6 @@
 ﻿namespace BulletServices
 {
-    public enum BulletType
+    public enum BulletType : short
     {
         LowDamage,
         MediumDamage,

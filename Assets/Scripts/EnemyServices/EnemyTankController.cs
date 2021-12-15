@@ -140,7 +140,7 @@ namespace EnemyTankServices
             tankView.fillImage.color = Color.Lerp(tankModel.zeroHealthColor, tankModel.fullHealthColor, tankModel.health / tankModel.maxHealth);
         }
 
-        private void Death()
+        public void Death()
         {
             tankModel.b_IsDead = true;
 

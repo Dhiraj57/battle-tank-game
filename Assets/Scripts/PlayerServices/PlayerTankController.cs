@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using BulletServices;
+using GameplayServices;
 
 namespace PlayerTankServices
 {
@@ -116,6 +117,8 @@ namespace PlayerTankServices
 
             camera.transform.parent = null;
             tankView.Death();
+
+            GameManager.Instance.DestroyAllGameObjects();
         }
 
         private void FireBulletInputCheck()
