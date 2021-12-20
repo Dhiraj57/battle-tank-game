@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: RedPlayerTank
   m_EditorClassIdentifier: 
   tankType: 2
-  tankView: {fileID: 5065401824681911573, guid: fe6318301a564d644b969d9cacf3bd64,
-    type: 3}
+  tankColor: {r: 0.6886792, g: 0.14618193, b: 0.14618193, a: 0}
   health: 100
   movementSpeed: 5
   rotationSpeed: 60

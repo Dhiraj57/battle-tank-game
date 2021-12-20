@@ -1,4 +1,5 @@
 ﻿using BulletServices;
+using TankSO;
 using UnityEngine;
 
 namespace PlayerTankServices
@@ -26,29 +27,33 @@ namespace PlayerTankServices
 
         public BulletType bulletType { get; }
 
+        public Color tankColor { get; set; }
 
-        public PlayerTankModel(int health, float speed, float rotationRate, float turretRotationRate, BulletType bulletType, float maxLaunchForce, float minLaunchForce, float maxChargeTime)
+
+        public PlayerTankModel(TankScriptableObject playerData)
         {
             b_IsDead = false;
             b_IsFired = false;
 
-            maxHealth = health;
-            this.health = health;
-            this.speed = speed;
-            this.rotationRate = rotationRate;
-            this.turretRotationRate = turretRotationRate;
+            maxHealth = playerData.health;
+            this.health = playerData.health;
+            this.speed = playerData.movementSpeed;
+            this.rotationRate = playerData.rotationSpeed;
+            this.turretRotationRate = playerData.turretRotationRate;
 
-            this.minLaunchForce = minLaunchForce;
-            this.maxLaunchForce = maxLaunchForce;
-            currentLaunchForce = minLaunchForce;
+            this.minLaunchForce = playerData.minLaunchForce;
+            this.maxLaunchForce = playerData.maxLaunchForce;
+            currentLaunchForce = playerData.minLaunchForce;
 
-            this.maxChargeTime = maxChargeTime;
+            this.maxChargeTime = playerData.maxChargeTime;
             chargeSpeed = (maxLaunchForce - minLaunchForce) / maxChargeTime;
 
             fullHealthColor = Color.green;
             zeroHealthColor = Color.red;
 
-            this.bulletType = bulletType;
+            tankColor = playerData.tankColor;
+
+            this.bulletType = playerData.bulletType;
         }
     }
 }

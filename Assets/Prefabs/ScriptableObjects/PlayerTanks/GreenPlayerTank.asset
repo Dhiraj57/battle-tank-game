@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: GreenPlayerTank
   m_EditorClassIdentifier: 
   tankType: 1
-  tankView: {fileID: 5065401824681911573, guid: b0d746113f2ecce47a5864fa6afb37b4,
-    type: 3}
+  tankColor: {r: 0.31695467, g: 0.6132076, b: 0.18222678, a: 0}
   health: 100
   movementSpeed: 10
   rotationSpeed: 60

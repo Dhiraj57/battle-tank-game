@@ -24,7 +24,6 @@ namespace BulletServices
             if(damagable != null)
             {
                 ApplyDamage(damagable, other);
-                ApplyExplosionForce(other);
             }
 
             PlayParticleEffects();

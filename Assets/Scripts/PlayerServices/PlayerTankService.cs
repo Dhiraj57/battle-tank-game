@@ -6,7 +6,7 @@ namespace PlayerTankServices
 {
     public class PlayerTankService : MonoSingletonGeneric<PlayerTankService>
     {
-        [HideInInspector] public PlayerTankView playerTankView;
+        public PlayerTankView playerTankView;
 
         public TankSOList playerTankList;
         public Joystick rightJoystick;
@@ -48,16 +48,8 @@ namespace PlayerTankServices
             {
                 if (tank.tankType == playerTankType)
                 {
-                    PlayerTankModel tankModel = new PlayerTankModel(playerTankList.tanks[(int)tanktype].health,
-                                                                    playerTankList.tanks[(int)tanktype].movementSpeed,
-                                                                    playerTankList.tanks[(int)tanktype].rotationSpeed,
-                                                                    playerTankList.tanks[(int)tanktype].turretRotationRate,
-                                                                    playerTankList.tanks[(int)tanktype].bulletType,
-                                                                    playerTankList.tanks[(int)tanktype].maxLaunchForce,
-                                                                    playerTankList.tanks[(int)tanktype].minLaunchForce,
-                                                                    playerTankList.tanks[(int)tanktype].maxChargeTime);
-
-                    PlayerTankController tankController = new PlayerTankController(tankModel, playerTankList.tanks[(int)tanktype].tankView);
+                    PlayerTankModel tankModel = new PlayerTankModel(tank);
+                    PlayerTankController tankController = new PlayerTankController(tankModel, playerTankView);
                     return tankController;
                 }
             }

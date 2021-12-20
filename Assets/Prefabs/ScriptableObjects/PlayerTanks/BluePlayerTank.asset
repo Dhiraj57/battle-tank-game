@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: BluePlayerTank
   m_EditorClassIdentifier: 
   tankType: 0
-  tankView: {fileID: 5065401824681911573, guid: f72af36b8c45bb34e87a56da293e8f33,
-    type: 3}
+  tankColor: {r: 0, g: 0.39317927, b: 0.8113208, a: 0}
   health: 100
   movementSpeed: 10
   rotationSpeed: 60

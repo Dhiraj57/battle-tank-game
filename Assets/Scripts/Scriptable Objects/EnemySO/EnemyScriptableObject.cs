@@ -11,7 +11,7 @@ namespace EnemySO
         public EnemyType enemyType;
 
         [Header("Enemy Prefab")]
-        public EnemyTankView enemyView;
+        public Color tankColor;
 
         [Header("Health Parameters")]
         public int health;

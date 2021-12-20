@@ -11,7 +11,7 @@ namespace TankSO
         public TankType tankType;
 
         [Header("Tank Prefab")]
-        public PlayerTankView tankView;
+        public Color tankColor;
 
         [Header("Health Parameters")]
         public int health;

@@ -8,6 +8,7 @@ namespace EnemyTankServices
     public class EnemyTankService : MonoSingletonGeneric<EnemyTankService>
     {
         public EnemySOList enemyTankList;
+        public EnemyTankView enemyTankView;
 
         private EnemyTankController tankController;
         private EnemyType enemyTankType;
@@ -27,7 +28,7 @@ namespace EnemyTankServices
                 {
                     EnemyTankModel tankModel = new EnemyTankModel(enemyTankList.enemies[(int)tanktype]);
 
-                    EnemyTankController tankController = new EnemyTankController(tankModel, enemyTankList.enemies[(int)tanktype].enemyView);
+                    EnemyTankController tankController = new EnemyTankController(tankModel, enemyTankView);
                     return tankController;
                 }
             }

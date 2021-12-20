@@ -17,7 +17,7 @@ namespace PlayerTankServices
         public PlayerTankController(PlayerTankModel tankModel, PlayerTankView tankPrefab)
         {
             this.tankModel = tankModel;
-            tankView = GameObject.Instantiate<PlayerTankView>(tankPrefab);
+            tankView = GameObject.Instantiate<PlayerTankView>(tankPrefab, SpawnPointService.Instance.GetPlayerSpawnPoint());
             tankRigidbody = tankView.GetComponent<Rigidbody>();
             tankView.SetTankControllerReference(this);
         }
@@ -31,13 +31,15 @@ namespace PlayerTankServices
         public void SetCameraReference(Camera cameraRef)
         {
             camera = cameraRef;
-            camera.transform.SetParent(tankView.turret.transform);
+            //camera.transform.SetParent(tankView.turret.transform);
         }
 
         public void UpdateTankController()
         {
             FireBulletInputCheck();
+            PlayEngineAudio();
         }
+
 
         public void FixedUpdateTankController()
         {
@@ -87,6 +89,7 @@ namespace PlayerTankServices
         {      
             tankModel.health -= damage;
             SetHealthUI();
+            ShowHealthUI();
 
             if (tankModel.health <= 0 && !tankModel.b_IsDead)
             {
@@ -99,6 +102,21 @@ namespace PlayerTankServices
             tankView.healthSlider.value = tankModel.health;
 
             tankView.fillImage.color = Color.Lerp(tankModel.zeroHealthColor, tankModel.fullHealthColor, tankModel.health / tankModel.maxHealth);
+        }
+
+        async public void ShowHealthUI()
+        {
+            if(tankView)
+            {
+                tankView.healthSlider.gameObject.SetActive(true);
+            }
+
+            await new WaitForSeconds(3f);
+
+            if (tankView)
+            {
+                tankView.healthSlider.gameObject.SetActive(false);
+            }
         }
 
         public void SetAimUI()
@@ -115,7 +133,8 @@ namespace PlayerTankServices
             tankView.explosionParticles.Play();
             tankView.explosionSound.Play();
 
-            camera.transform.parent = null;
+            camera.transform.parent = null;         
+
             tankView.Death();
 
             GameManager.Instance.DestroyAllGameObjects();
@@ -165,6 +184,26 @@ namespace PlayerTankServices
             tankView.shootingAudio.Play();
 
             tankModel.currentLaunchForce = tankModel.minLaunchForce;
+        }
+
+        private void PlayEngineAudio()
+        {
+            if (leftJoystick.Vertical != 0 || leftJoystick.Horizontal != 0)
+            {
+                if (tankView && tankView.movementAudio.clip == tankView.engineIdling)
+                {
+                    tankView.movementAudio.clip = tankView.engineDriving;
+                    tankView.movementAudio.Play();
+                }
+            }
+            else
+            {
+                if (tankView && tankView.movementAudio.clip == tankView.engineDriving)
+                {
+                    tankView.movementAudio.clip = tankView.engineIdling;
+                    tankView.movementAudio.Play();
+                }            
+            }
         }
     }
 }

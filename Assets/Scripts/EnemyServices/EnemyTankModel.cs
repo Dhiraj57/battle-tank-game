@@ -40,6 +40,8 @@ namespace EnemyTankServices
         public bool b_PlayerInSightRange { get; set; }
         public bool b_PlayerInAttackRange { get; set; }
 
+        public Color tankColor { get; set; }
+
 
         public EnemyTankModel(EnemyScriptableObject enemyData)
         {
@@ -66,6 +68,8 @@ namespace EnemyTankServices
 
             fullHealthColor = Color.green;
             zeroHealthColor = Color.red;
+
+            tankColor = enemyData.tankColor;
         }
     }
 }

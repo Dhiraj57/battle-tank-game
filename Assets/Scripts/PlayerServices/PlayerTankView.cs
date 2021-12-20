@@ -1,4 +1,5 @@
-﻿using GlobalServices;
+﻿using GameplayServices;
+using GlobalServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +7,7 @@ namespace PlayerTankServices
 {
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerTankView : MonoBehaviour, IDamagable
-    {
+    {        
         public GameObject turret;
         public GameObject explosionEffectPrefab;
 
@@ -18,10 +19,12 @@ namespace PlayerTankServices
         public Transform fireTransform;
         public Slider aimSlider;
 
-        [HideInInspector]
-        public AudioSource explosionSound;
-        [HideInInspector]
-        public ParticleSystem explosionParticles;
+        public AudioSource movementAudio;
+        public AudioClip engineIdling;
+        public AudioClip engineDriving;
+
+        [HideInInspector] public AudioSource explosionSound;
+        [HideInInspector] public ParticleSystem explosionParticles;
 
         public AudioSource shootingAudio;
         public AudioClip chargingClip;
@@ -33,13 +36,16 @@ namespace PlayerTankServices
         {
             explosionParticles = Instantiate(explosionEffectPrefab).GetComponent<ParticleSystem>();
             explosionSound = explosionParticles.GetComponent<AudioSource>();
-            explosionParticles.gameObject.SetActive(false);
+            explosionParticles.gameObject.SetActive(false);        
         }
 
         private void Start()
         {
             tankController.SetHealthUI();
             tankController.SetAimUI();
+            SetPlayerTankColor();
+
+            CameraController.Instance.AddCameraTargetPosition(this.transform);
         }
 
         public void SetTankControllerReference(PlayerTankController controller)
@@ -49,12 +55,23 @@ namespace PlayerTankServices
 
         public void Death()
         {
+            CameraController.Instance.RemoveCameraTargetPosition(this.transform);
+            CameraController.Instance.SetCameraWithEndTargets();
             Destroy(gameObject);
         }
 
         public void TakeDamage(int damage)
         {
             tankController.TakeDamage(damage); 
+        }
+
+        public void SetPlayerTankColor()
+        {
+            MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].material.color = tankController.tankModel.tankColor;
+            }
         }
     }
 }
