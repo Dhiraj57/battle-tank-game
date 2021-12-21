@@ -18,8 +18,11 @@ namespace PlayerTankServices
         public float maxChargeTime { get; }
         public float chargeSpeed { get; }
 
-        public bool b_IsDead { get; set; }
+        public int bulletsFired { get; set; }
+        public int enemiesKilled { get; set; }
+        public int waveSurvived { get; set; }
 
+        public bool b_IsDead { get; set; }
         public bool b_IsFired { get; set; }
 
         public Color fullHealthColor { get; }

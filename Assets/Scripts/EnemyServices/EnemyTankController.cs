@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using BulletServices;
+﻿using GameplayServices;
+using GlobalServices;
+using UnityEngine;
 
 namespace EnemyTankServices
 {
@@ -11,7 +12,8 @@ namespace EnemyTankServices
         public EnemyTankController(EnemyTankModel tankModel, EnemyTankView tankPrefab)
         {
             this.tankModel = tankModel;
-            tankView = GameObject.Instantiate<EnemyTankView>(tankPrefab, new Vector3(3,0,-3), new Quaternion(0,0,0,0));
+            Transform tranform = SpawnPointService.Instance.GetRandomSpawnPoint();
+            tankView = GameObject.Instantiate<EnemyTankView>(tankPrefab, tranform.position, tranform.rotation);
             tankView.tankController = this;
         }
 
@@ -64,6 +66,9 @@ namespace EnemyTankServices
             tankView.explosionSound.Play(); 
 
             tankView.Death();
+            EnemyTankService.Instance.DestroyEnemy(this);
+
+            EventService.Instance.InvokeOnEnemyDeathEvent();
         }
     }
 }

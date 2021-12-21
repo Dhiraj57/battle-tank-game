@@ -1,40 +1,82 @@
-﻿using EnemyTankServices;
-using GlobalServices;
+﻿using GlobalServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using SFXServices;
+using EnemyTankServices;
+using PlayerTankServices;
+using UIServices;
 
 namespace GameplayServices
 {
     public class GameManager : MonoSingletonGeneric<GameManager>
     {
-        public void DestroyAllGameObjects()
+        [HideInInspector] public bool gamePaused = false;
+        [HideInInspector] public bool gameOver = false;
+        private string currentPlayerName;
+        private string recordHolderName;
+        private int highScore;
+        private int currentWave;
+
+        private void Start()
         {
-            DestroyEnemyObjects();
-            DestroyGroundObjects();
+            currentWave = 0;
+            highScore = PlayerPrefs.GetInt("highScore", PlayerPrefs.GetInt("highScore"));
+            recordHolderName = PlayerPrefs.GetString("recordHolderName", PlayerPrefs.GetString("recordHolderName"));
         }
 
-        private async void DestroyEnemyObjects()
+        public void RestartGame()
         {
-            await new WaitForSeconds(2f);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
 
-            GameObject[] enemyObjects = GameObject.FindGameObjectsWithTag("EnemyTank");
+        public void ResetData()
+        {
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+        }
 
-            for (int i = 0; i < enemyObjects.Length; i++)
+        public void PasueGame()
+        {
+            gamePaused = true;
+            SFXHandler.Instance.TurnOffSoundsExceptUI();
+            PlayerTankService.Instance.TurnOFFTanks();
+            EnemyTankService.Instance.TurnOFFEnemies();
+        }
+
+        public void ResumeGame()
+        {
+            gamePaused = false;
+            SFXHandler.Instance.TurnOnSounds();
+            PlayerTankService.Instance.TurnONTanks();
+            EnemyTankService.Instance.TurnONEnemies();
+        }
+
+        public void SetCurrentPlayerName(string name)
+        {
+            currentPlayerName = name;
+            PlayerPrefs.SetString("currentPlayerName", currentPlayerName);
+        }
+
+        public void CheckForHighScore()
+        {
+            if(UIHandler.Instance.GetCurrentScore() > highScore)
             {
-                enemyObjects[i].GetComponent<EnemyTankView>().tankController.Death();  
+                PlayerPrefs.SetInt("highScore", UIHandler.Instance.GetCurrentScore());
+                PlayerPrefs.SetString("recordHolderName", currentPlayerName);
+
+                recordHolderName = currentPlayerName;
+                highScore = UIHandler.Instance.GetCurrentScore();
             }
         }
 
-        private async void DestroyGroundObjects()
+        public string GetHighScore()
         {
-            await new WaitForSeconds(3f);
+            return PlayerPrefs.GetInt("highScore").ToString();
+        }
 
-            GameObject[] enemyObjects = GameObject.FindGameObjectsWithTag("Ground");
-
-            for (int i = enemyObjects.Length - 1; i >= 0; i--)
-            {
-                Destroy(enemyObjects[i]);
-                await new WaitForSeconds(0.05f);
-            }
+        public string GetRecordHolderName()
+        {
+            return PlayerPrefs.GetString("recordHolderName");
         }
     }
 }

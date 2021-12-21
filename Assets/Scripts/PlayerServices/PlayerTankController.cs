@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using BulletServices;
 using GameplayServices;
+using VFXServices;
+using GlobalServices;
+using UIServices;
+using AchievementServices;
 
 namespace PlayerTankServices
 {
@@ -12,7 +16,6 @@ namespace PlayerTankServices
         private Rigidbody tankRigidbody;
         private Joystick rightJoystick;
         private Joystick leftJoystick;
-        private Camera camera;
 
         public PlayerTankController(PlayerTankModel tankModel, PlayerTankView tankPrefab)
         {
@@ -20,6 +23,8 @@ namespace PlayerTankServices
             tankView = GameObject.Instantiate<PlayerTankView>(tankPrefab, SpawnPointService.Instance.GetPlayerSpawnPoint());
             tankRigidbody = tankView.GetComponent<Rigidbody>();
             tankView.SetTankControllerReference(this);
+
+            SubscribeEvent();
         }
 
         public void SetJoystickReference(Joystick rightRef, Joystick leftRef)
@@ -28,10 +33,40 @@ namespace PlayerTankServices
             leftJoystick = leftRef;
         }
 
-        public void SetCameraReference(Camera cameraRef)
+        private void SubscribeEvent()
         {
-            camera = cameraRef;
-            //camera.transform.SetParent(tankView.turret.transform);
+            EventService.Instance.OnEnemyDeath += UpdateEnemiesKilledCount;
+            EventService.Instance.OnWaveSurvived += UpdateWaveSurvivedCount;
+            EventService.Instance.OnplayerFiredBullet += UpdateBulletsFiredCount;
+        }
+
+        private void UnsubscribeEvents()
+        {
+            EventService.Instance.OnEnemyDeath -= UpdateEnemiesKilledCount;
+            EventService.Instance.OnWaveSurvived -= UpdateWaveSurvivedCount;
+            EventService.Instance.OnplayerFiredBullet -= UpdateBulletsFiredCount;
+        }
+
+        private void UpdateEnemiesKilledCount()
+        {
+            tankModel.enemiesKilled += 1;
+            PlayerPrefs.SetInt("EnemiesKilled", tankModel.enemiesKilled);
+            UIHandler.Instance.UpdateScoreText();
+            AchievementHandler.Instance.CheckForEnemiesKilledAchievement();
+        }
+
+        private void UpdateWaveSurvivedCount()
+        {
+            tankModel.waveSurvived += 1;
+            PlayerPrefs.SetInt("WaveSurvived", tankModel.waveSurvived);
+            AchievementHandler.Instance.CheckForWavesSurvivedAvhievement();
+        }
+
+        private void UpdateBulletsFiredCount()
+        {
+            tankModel.bulletsFired += 1;
+            PlayerPrefs.SetInt("BulletsFired", tankModel.bulletsFired);
+            AchievementHandler.Instance.CheckForBulletFiredAchievement();
         }
 
         public void UpdateTankController()
@@ -124,8 +159,10 @@ namespace PlayerTankServices
             tankView.aimSlider.value = tankModel.currentLaunchForce;
         }
 
-        private void Death()
+        public void Death()
         {
+            UnsubscribeEvents();
+
             tankModel.b_IsDead = true;
 
             tankView.explosionParticles.transform.position = tankView.transform.position;
@@ -133,11 +170,10 @@ namespace PlayerTankServices
             tankView.explosionParticles.Play();
             tankView.explosionSound.Play();
 
-            camera.transform.parent = null;         
-
+            PlayerTankService.Instance.DestroyTank(this);
             tankView.Death();
 
-            GameManager.Instance.DestroyAllGameObjects();
+            VFXHandler.Instance.DestroyAllGameObjects();
         }
 
         private void FireBulletInputCheck()
@@ -184,6 +220,8 @@ namespace PlayerTankServices
             tankView.shootingAudio.Play();
 
             tankModel.currentLaunchForce = tankModel.minLaunchForce;
+
+            EventService.Instance.InvokeOnPlayerFiredBulletEvent();
         }
 
         private void PlayEngineAudio()
