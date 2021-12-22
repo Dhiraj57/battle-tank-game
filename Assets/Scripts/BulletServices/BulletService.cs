@@ -8,9 +8,9 @@ namespace BulletServices
     {
         public BulletSOList bulletList;
 
-        public void FireBullet(BulletType bulletType, Transform bulletTransform, float launchForce)
+        public BulletController FireBullet(BulletType bulletType, Transform bulletTransform, float launchForce)
         {
-            CreateBullet(bulletType, bulletTransform, launchForce);
+            return CreateBullet(bulletType, bulletTransform, launchForce);
         }
 
         private BulletController CreateBullet(BulletType bulletType, Transform bulletTransform, float launchForce)

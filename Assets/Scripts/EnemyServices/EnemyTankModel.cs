@@ -53,6 +53,7 @@ namespace EnemyTankServices
             turretRotationRate = enemyData.turretRotationRate;
 
             b_IsWalkPoint = false;
+            b_IsDead = false;
             walkPointRange = enemyData.walkPointRange;
 
             patrolTime = enemyData.patrolTime;

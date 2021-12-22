@@ -1,4 +1,5 @@
 ﻿using EnemyTankServices;
+using GameplayServices;
 using GlobalServices;
 using UIServices;
 using UnityEngine;
@@ -29,8 +30,9 @@ public class WaveManager : MonoSingletonGeneric<WaveManager>
         for(int i=0; i < enemyCount; i++)
         {
             await new WaitForSeconds(tankSpawnDelay + 1);
+
             int rand = Random.Range(0, EnemyTankService.Instance.enemyTankList.enemies.Length);
-            EnemyTankService.Instance.CreateEnemyTank((EnemyType) rand);
+            EnemyTankService.Instance.CreateEnemyTank((EnemyType)rand);
         }
     }
 

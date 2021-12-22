@@ -28,11 +28,11 @@ namespace VFXServices
         {
             await new WaitForSeconds(3f);
 
-            GameObject[] enemyObjects = GameObject.FindGameObjectsWithTag("Ground");
+            GameObject[] groundObjects = GameObject.FindGameObjectsWithTag("Ground");
 
-            for (int i = enemyObjects.Length - 1; i >= 0; i--)
+            for (int i = groundObjects.Length - 1; i >= 0; i--)
             {
-                Destroy(enemyObjects[i]);
+                Destroy(groundObjects[i]);
                 await new WaitForSeconds(0.05f);
             }
         }

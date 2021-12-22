@@ -62,7 +62,7 @@ namespace EnemyTankServices
             {
                 if (enemyTanks[i] != null)
                 {
-                    if(enemyTanks[i].tankView) enemyTanks[i].tankView.gameObject.SetActive(true);
+                    if(enemyTanks[i].tankView && !enemyTanks[i].tankModel.b_IsDead) enemyTanks[i].tankView.gameObject.SetActive(true);
                 }
             }
         }

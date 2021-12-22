@@ -1,5 +1,6 @@
 ﻿using GameplayServices;
 using GlobalServices;
+using System;
 using UnityEngine;
 
 namespace EnemyTankServices
@@ -15,6 +16,18 @@ namespace EnemyTankServices
             Transform tranform = SpawnPointService.Instance.GetRandomSpawnPoint();
             tankView = GameObject.Instantiate<EnemyTankView>(tankPrefab, tranform.position, tranform.rotation);
             tankView.tankController = this;
+        }
+
+        public void EnableTankView()
+        {
+            tankView.gameObject.SetActive(true);
+            tankModel.b_IsDead = false;
+        }
+
+        public void DisableTankView()
+        {
+            tankView.gameObject.SetActive(false);
+            tankModel.b_IsDead = true;
         }
 
         public void UpdateTankController()
@@ -33,6 +46,12 @@ namespace EnemyTankServices
             {
                 Death();
             }
+        }
+
+        private void ResetTankModel()
+        {
+            tankModel.health = tankModel.maxHealth;
+            tankModel.b_IsDead = false;
         }
 
         public void SetHealthUI()
@@ -63,11 +82,11 @@ namespace EnemyTankServices
             tankView.explosionParticles.transform.position = tankView.transform.position;
             tankView.explosionParticles.gameObject.SetActive(true);
             tankView.explosionParticles.Play();
-            tankView.explosionSound.Play(); 
+            tankView.explosionSound.Play();
 
             tankView.Death();
-            EnemyTankService.Instance.DestroyEnemy(this);
 
+            EnemyTankService.Instance.DestroyEnemy(this);
             EventService.Instance.InvokeOnEnemyDeathEvent();
         }
     }
