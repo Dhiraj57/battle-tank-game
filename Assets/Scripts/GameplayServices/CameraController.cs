@@ -9,11 +9,12 @@ namespace GameplayServices
     {
         private List<Transform> targets = new List<Transform>();
 
-        [SerializeField] private Transform[] endTargets = new Transform[2];
-
         [SerializeField] private float dampTime = 0.2f;
+        [SerializeField] private float targetAdditionDampTime = 1.5f;
+        [SerializeField] private float endTargetDampTime = 2.1f;
         [SerializeField] private float screenEdgeBuffer = 4f;
         [SerializeField] private float MinSize = 6.5f;
+        [SerializeField] private float MaxSize = 10f;
 
         private Camera camera;
         private float originalDampTime;
@@ -21,17 +22,72 @@ namespace GameplayServices
         private Vector3 moveVelocity;
         private Vector3 desiredPosition;
 
+        private bool b_IsGameOver;
+        private bool b_IsMove;
+
         protected override void Awake()
         {
             base.Awake();
+
             camera = GetComponentInChildren<Camera>();
             originalDampTime = dampTime;
+            b_IsGameOver = false;
+            b_IsMove = true;
+        }
+
+        private void OnEnable()
+        {
+            EventService.Instance.OnGameOver += GameOver;
+            EventService.Instance.OnGamePaused += GamePaused;
+            EventService.Instance.OnGameResumed += GameResumed;
+        }
+
+        private void OnDisable()
+        {
+            EventService.Instance.OnGameOver -= GameOver;
+            EventService.Instance.OnGamePaused -= GamePaused;
+            EventService.Instance.OnGameResumed -= GameResumed;
         }
 
         private void FixedUpdate()
         {
-            Move();
-            Zoom();
+            if(b_IsMove)
+            {
+                Move();
+                Zoom();
+            }
+            else if(b_IsGameOver)
+            {
+                SetCameraToGameOverCondition();
+            }
+
+            if(dampTime != originalDampTime && !b_IsGameOver && b_IsMove)
+            {
+                ResetDampTime();
+            }
+        }
+
+        async private void GameOver()
+        {
+            b_IsGameOver = true;
+            RemoveAllCameraTargetPositions();
+            b_IsMove = false;
+        }
+
+        private void SetCameraToGameOverCondition()
+        {
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(6,8.5f,0), ref moveVelocity, 2f);
+            camera.orthographicSize = Mathf.SmoothDamp(camera.orthographicSize, 20, ref zoomSpeed, 2f);
+        }
+
+        private void GamePaused()
+        {
+            b_IsMove = false;
+        }
+
+        private void GameResumed()
+        {
+            b_IsMove = true;
         }
 
         private void Move()
@@ -49,11 +105,19 @@ namespace GameplayServices
             {
                 if(!targets[i].gameObject.activeSelf)
                 {
-                    continue;
+                   continue;
                 }
 
-                averagePos += targets[i].position;
-                numTargets++;
+                if(i == 0 && !b_IsGameOver)
+                {
+                    averagePos += targets[i].position * 3;
+                    numTargets += 3;
+                }
+                else
+                {
+                    averagePos += targets[i].position;
+                    numTargets++;
+                }
             }
 
             if(numTargets > 0)
@@ -90,6 +154,8 @@ namespace GameplayServices
                 size = Mathf.Max(size, Mathf.Abs(desiredPositionToTarget.x) / camera.aspect);
             }
 
+            size = Mathf.Min(size, MaxSize);
+
             size += screenEdgeBuffer;
             size = Mathf.Max(size, MinSize);
 
@@ -104,32 +170,32 @@ namespace GameplayServices
             camera.orthographicSize = FindRequiredSize();
         }
 
-        public void AddCameraTargetPosition(Transform target)
+        async public void AddCameraTargetPosition(Transform target)
         {
+            dampTime = targetAdditionDampTime;
             targets.Add(target);
         }
 
         public void RemoveCameraTargetPosition(Transform target)
         {
+            if(!b_IsGameOver)
+            {
+                dampTime = targetAdditionDampTime;
+            }
             targets.Remove(target);
         }
 
-        public void SetCameraWithEndTargets()
-        {
-            for(int i=0; i < endTargets.Length; i++)
+        public void RemoveAllCameraTargetPositions()
+        {         
+            for (int i = 0; i < targets.Count; i++)
             {
-                targets.Add(endTargets[i]);
-                dampTime = 2.5f;
+                targets.Remove(targets[i]);
             }
         }
 
-        public void RemoveCameraEndTargets()
+        private void ResetDampTime()
         {
-            for (int i = 0; i < endTargets.Length; i++)
-            {
-                targets.Remove(endTargets[i]);
-                dampTime = originalDampTime;
-            }
+            dampTime = Mathf.Lerp(dampTime, originalDampTime, Time.deltaTime);
         }
     }
 }

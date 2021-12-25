@@ -32,6 +32,25 @@ namespace BulletServices
             bulletView.DestroyBullet();
         }
 
+        public void GamePaused()
+        {
+            bulletView.gameObject.SetActive(false);
+            
+            Rigidbody bullet = bulletView.gameObject.GetComponent<Rigidbody>();
+            bulletModel.currentVelocity = bullet.velocity;
+            bullet.velocity = Vector3.zero;
+            bullet.useGravity = false;
+        }
+
+        public void GameResumed()
+        {
+            bulletView.gameObject.SetActive(true);
+
+            Rigidbody bullet = bulletView.gameObject.GetComponent<Rigidbody>();
+            bullet.velocity = bulletModel.currentVelocity;
+            bullet.useGravity = true;
+        }
+
 
         private void ApplyDamage(IDamagable damagable, Collider other)
         {

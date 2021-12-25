@@ -5,6 +5,7 @@ using VFXServices;
 using GlobalServices;
 using UIServices;
 using AchievementServices;
+using UnityEngine.UI;
 
 namespace PlayerTankServices
 {
@@ -16,6 +17,8 @@ namespace PlayerTankServices
         private Rigidbody tankRigidbody;
         private Joystick rightJoystick;
         private Joystick leftJoystick;
+
+        private bool b_IsFireButtonPressed = false;
 
         public PlayerTankController(PlayerTankModel tankModel, PlayerTankView tankPrefab)
         {
@@ -38,6 +41,8 @@ namespace PlayerTankServices
             EventService.Instance.OnEnemyDeath += UpdateEnemiesKilledCount;
             EventService.Instance.OnWaveSurvived += UpdateWaveSurvivedCount;
             EventService.Instance.OnplayerFiredBullet += UpdateBulletsFiredCount;
+            EventService.Instance.OnFireButtonPressed += FireButtonPressed;
+            EventService.Instance.OnFireButtonReleased += FireButtonReleased;
         }
 
         private void UnsubscribeEvents()
@@ -45,6 +50,8 @@ namespace PlayerTankServices
             EventService.Instance.OnEnemyDeath -= UpdateEnemiesKilledCount;
             EventService.Instance.OnWaveSurvived -= UpdateWaveSurvivedCount;
             EventService.Instance.OnplayerFiredBullet -= UpdateBulletsFiredCount;
+            EventService.Instance.OnFireButtonPressed -= FireButtonPressed;
+            EventService.Instance.OnFireButtonReleased -= FireButtonReleased;
         }
 
         private void UpdateEnemiesKilledCount()
@@ -71,14 +78,17 @@ namespace PlayerTankServices
 
         public void UpdateTankController()
         {
-            FireBulletInputCheck();
-            PlayEngineAudio();
+            if(!tankModel.b_IsDead)
+            {
+                FireBulletInputCheck();
+                PlayEngineAudio();
+            }
         }
 
 
         public void FixedUpdateTankController()
-        {
-            if(tankRigidbody)
+        {       
+            if (tankRigidbody && !tankModel.b_IsDead)
             {
                 if(leftJoystick.Vertical != 0)
                 {
@@ -90,7 +100,7 @@ namespace PlayerTankServices
                 }
             }
 
-            if(tankView.turret)
+            if(tankView.turret && !tankModel.b_IsDead)
             {
                 if(rightJoystick.Horizontal != 0)
                 {
@@ -176,6 +186,26 @@ namespace PlayerTankServices
             VFXHandler.Instance.DestroyAllGameObjects();
         }
 
+        private void FireButtonPressed()
+        {
+            tankModel.b_IsFired = false;
+            tankModel.currentLaunchForce = tankModel.minLaunchForce;
+            tankView.shootingAudio.clip = tankView.chargingClip;
+            tankView.shootingAudio.Play();
+
+            b_IsFireButtonPressed = true;
+        }
+
+        private void FireButtonReleased()
+        {
+            b_IsFireButtonPressed = false;
+
+            if(!tankModel.b_IsFired)
+            {
+                FireBullet();
+            }
+        }
+
         private void FireBulletInputCheck()
         {
             // To track current state of fire button.
@@ -188,26 +218,11 @@ namespace PlayerTankServices
                 FireBullet();
             }
 
-            else if (Input.GetButtonDown("Jump"))
-            {
-                // Pressed fire button for the first time.
-                tankModel.b_IsFired = false;
-                tankModel.currentLaunchForce = tankModel.minLaunchForce;
-
-                tankView.shootingAudio.clip = tankView.chargingClip;
-                tankView.shootingAudio.Play();
-            }
-
-            else if (Input.GetButton("Jump") && !tankModel.b_IsFired)
+            else if (b_IsFireButtonPressed && !tankModel.b_IsFired)
             {
                 // Holding the fire button, not yet fired.
                 tankModel.currentLaunchForce += tankModel.chargeSpeed * Time.deltaTime;
                 tankView.aimSlider.value = tankModel.currentLaunchForce;
-            }
-
-            else if (Input.GetButtonUp("Jump") && !tankModel.b_IsFired)
-            {
-                FireBullet();
             }
         }
 

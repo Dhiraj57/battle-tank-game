@@ -10,7 +10,7 @@ namespace EnemyTankServices
         public EnemySOList enemyTankList;
         public EnemyTankView enemyTankView;
 
-        private List<EnemyTankController> enemyTanks = new List<EnemyTankController>();
+        [HideInInspector] public List<EnemyTankController> enemyTanks = new List<EnemyTankController>();
         private EnemyType enemyTankType;
 
         public EnemyTankController CreateEnemyTank(EnemyType tanktype)

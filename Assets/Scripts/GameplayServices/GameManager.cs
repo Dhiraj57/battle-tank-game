@@ -12,17 +12,25 @@ namespace GameplayServices
     {
         [HideInInspector] public bool gamePaused = false;
         [HideInInspector] public bool gameOver = false;
+
         private string currentPlayerName;
         private string recordHolderName;
         private int highScore;
         private int currentWave;
 
+
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+
         private void Start()
         {
+            EventService.Instance.InvokeOnGameStartedEvent();
             currentWave = 0;
             highScore = PlayerPrefs.GetInt("highScore", PlayerPrefs.GetInt("highScore"));
             recordHolderName = PlayerPrefs.GetString("recordHolderName", PlayerPrefs.GetString("recordHolderName"));
-        }
+        }   
 
         public void RestartGame()
         {
@@ -37,6 +45,7 @@ namespace GameplayServices
 
         public void PasueGame()
         {
+            EventService.Instance.InvokeOnGamePausedEvent();
             gamePaused = true;
             SFXHandler.Instance.TurnOffSoundsExceptUI();
             PlayerTankService.Instance.TurnOFFTanks();
@@ -45,6 +54,7 @@ namespace GameplayServices
 
         public void ResumeGame()
         {
+            EventService.Instance.InvokeOnGameResumedEvent();
             gamePaused = false;
             SFXHandler.Instance.TurnOnSounds();
             PlayerTankService.Instance.TurnONTanks();

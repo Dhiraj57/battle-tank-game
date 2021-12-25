@@ -57,6 +57,8 @@ namespace PlayerTankServices
             tankColor = playerData.tankColor;
 
             this.bulletType = playerData.bulletType;
+
+            waveSurvived = -1;
         }
     }
 }

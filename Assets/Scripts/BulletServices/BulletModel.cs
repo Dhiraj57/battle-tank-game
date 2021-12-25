@@ -1,4 +1,5 @@
-﻿
+﻿using UnityEngine;
+
 namespace BulletServices
 {
     public class BulletModel
@@ -7,6 +8,7 @@ namespace BulletServices
         public float maxLifeTime { get; }
         public float explosionRadius { get; }
         public float explosionForce { get; }
+        public Vector3 currentVelocity { get; set; }
 
         public BulletModel(int bulletDamage, float maxLifeTime, float explosionRadius, float explosionForce)
         {

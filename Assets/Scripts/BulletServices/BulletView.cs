@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GlobalServices;
+using UnityEngine;
 
 namespace BulletServices
 {
@@ -10,7 +11,7 @@ namespace BulletServices
         public ParticleSystem explosionParticles;
         public AudioSource explosionSound;
 
-        public LayerMask layerMask;
+        public LayerMask layerMask;     
 
         public void SetBulletController(BulletController controller)
         {
@@ -19,8 +20,15 @@ namespace BulletServices
 
         private void Start()
         {
-            Destroy(gameObject, bulletController.bulletModel.maxLifeTime);
+            EventService.Instance.OnGamePaused += bulletController.GamePaused;
+            EventService.Instance.OnGameResumed += bulletController.GameResumed;
         }
+
+        private void OnDestroy()
+        {
+            EventService.Instance.OnGamePaused -= bulletController.GamePaused;
+            EventService.Instance.OnGameResumed -= bulletController.GameResumed;         
+        }    
 
         private void OnTriggerEnter(Collider other)
         {

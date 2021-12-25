@@ -31,12 +31,13 @@ namespace PlayerTankServices
         public AudioClip fireClip;
 
         private PlayerTankController tankController;
+        private bool b_FireButtonPressed = false;
 
         private void Awake()
         {
             explosionParticles = Instantiate(explosionEffectPrefab).GetComponent<ParticleSystem>();
             explosionSound = explosionParticles.GetComponent<AudioSource>();
-            explosionParticles.gameObject.SetActive(false);        
+            explosionParticles.gameObject.SetActive(false);  
         }
 
         private void Start()
@@ -56,7 +57,6 @@ namespace PlayerTankServices
         public void Death()
         {
             CameraController.Instance.RemoveCameraTargetPosition(this.transform);
-            CameraController.Instance.SetCameraWithEndTargets();
             Destroy(gameObject);
         }
 

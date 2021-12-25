@@ -81,6 +81,8 @@ namespace PlayerTankServices
                     playerTanks.Remove(tank);
                 }
             }
+
+            EventService.Instance.InvokeOnGameOverEvent();
         }
 
         public void TurnONTanks()
