@@ -1,6 +1,7 @@
 ﻿
 namespace GlobalServices
 {
+    // Implementation of singleton class without monobehaviour.
     public class LazySingleton
     {
         private static LazySingleton instance;

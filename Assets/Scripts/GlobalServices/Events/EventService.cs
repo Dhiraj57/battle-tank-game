@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace GlobalServices
 {
+    // Observer pattern implementation. Handles all event actions.
     public class EventService : MonoSingletonGeneric<EventService>
     {
         public event Action OnGameStarted;

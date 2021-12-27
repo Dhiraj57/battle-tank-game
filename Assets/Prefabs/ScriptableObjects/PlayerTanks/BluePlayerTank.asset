@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tankType: 0
   tankColor: {r: 0, g: 0.39317927, b: 0.8113208, a: 0}
-  health: 10
+  health: 100
   movementSpeed: 10
-  rotationSpeed: 60
-  turretRotationRate: 40
+  rotationSpeed: 80
+  turretRotationRate: 70
   bulletType: 0
   minLaunchForce: 15
   maxLaunchForce: 30

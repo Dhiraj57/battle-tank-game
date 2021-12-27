@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyType: 1
   tankColor: {r: 0.2002603, g: 0.49056602, b: 0.12726949, a: 0}
   health: 50
-  movementSpeed: 10
+  movementSpeed: 9
   rotationSpeed: 60
   turretRotationRate: 40
   walkPointRange: 50

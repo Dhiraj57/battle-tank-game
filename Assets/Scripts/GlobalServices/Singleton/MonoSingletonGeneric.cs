@@ -2,7 +2,7 @@
 
 namespace GlobalServices
 {
-    // Template for creating singleton class.
+    // Template for creating singleton class. // Generic singleton class.
     public class MonoSingletonGeneric<T> : MonoBehaviour where T: MonoSingletonGeneric<T>
     {
         private static T instance;

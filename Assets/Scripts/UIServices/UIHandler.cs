@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace UIServices
 {
+    // Handles all UI components from game scene.
     public class UIHandler : MonoSingletonGeneric<UIHandler>
     {
         [SerializeField] private GameObject joystickControllerObject;
@@ -21,13 +22,12 @@ namespace UIServices
         [SerializeField] private Text scoreText;
 
         private int currentScore;
-        private bool b_IsGameOver;
         private bool b_IsAchievementVisible;
 
         private void Start()
         {
             currentScore = 0;
-            b_IsGameOver = false;
+
             b_IsAchievementVisible = false;
 
             scoreText.text = "Score : " + currentScore.ToString();
@@ -44,6 +44,7 @@ namespace UIServices
             EventService.Instance.OnGameResumed -= GameResumed;
         }
 
+        // If game pasued, disables all UI components and enables pause menu panel.
         private void GamePaused()
         {
             scoreText.gameObject.SetActive(false);
@@ -52,6 +53,7 @@ namespace UIServices
             pausePanel.gameObject.SetActive(true);
         }
 
+        // If game resumed, enables all UI components and disables pause menu panel.
         private void GameResumed()
         {
             scoreText.gameObject.SetActive(true);
@@ -60,12 +62,13 @@ namespace UIServices
             pausePanel.gameObject.SetActive(false);
         }
 
+        // Displays unlocked achievemnt text.
         public async void ShowAchievementUnlocked(string name, string achievementInfo, float timeForDisplay)
         {
             b_IsAchievementVisible = true;
 
             GameManager.Instance.PasueGame();
-            GamePaused();
+
             pausePanel.gameObject.SetActive(false);
             achievementText.text = "ACHIEVEMENT UNLOCKED";
             achievementNameText.text = name;
@@ -74,23 +77,13 @@ namespace UIServices
 
             await new WaitForSeconds(timeForDisplay);
 
-            achievementText.text = null;
-            achievementNameText.text = null;
-            achievementInfoText.text = null;
             achievementImage.gameObject.SetActive(false);
             GameManager.Instance.ResumeGame();
-            GameResumed();
 
             b_IsAchievementVisible = false;
         }
 
-        public void ShowGameOverUI()
-        {
-            gameOverPanel.SetActive(true);
-            pausePanel.SetActive(false);
-            SetGameOverPanelAlpha();
-        }
-
+        // Displays wave number.
         public async void ShowDisplayText(string text, float timeForDisplay)
         {
             if(b_IsAchievementVisible)
@@ -98,24 +91,25 @@ namespace UIServices
                 await new WaitForSeconds(timeForDisplay);
             }
 
-            UpdateDisplayText(text);
             GameManager.Instance.PasueGame();
-            GamePaused();
             pausePanel.gameObject.SetActive(false);
+
+            displayText.text = text;
             displayText.gameObject.SetActive(true);
 
             await new WaitForSeconds(timeForDisplay);
 
             displayText.gameObject.SetActive(false);
             GameManager.Instance.ResumeGame();
-            GameResumed();
         }
 
+        // Returns current player score.
         public int GetCurrentScore()
         {
             return currentScore;
         }
 
+        // To set current score value. 
         public void UpdateScoreText(int scoreMultiplier = 1)
         {
             int finalScore = (currentScore + 10) * scoreMultiplier;
@@ -123,17 +117,15 @@ namespace UIServices
             scoreText.text = "Score : " + finalScore.ToString();
         }
 
-        public void ResetScore()
+        // Enables game over panel.
+        public void ShowGameOverUI()
         {
-            currentScore = 0;
-            scoreText.text = "Score : " + currentScore.ToString();
+            gameOverPanel.SetActive(true);
+            pausePanel.SetActive(false);
+            SetGameOverPanelAlpha();
         }
 
-        public void UpdateDisplayText(string text)
-        {
-            displayText.text = text;
-        }
-
+        // Disables all UI components.
         async private void GameOver()
         {
             scoreText.gameObject.SetActive(false);
@@ -141,10 +133,10 @@ namespace UIServices
             buttons.gameObject.SetActive(false);
 
             await new WaitForSeconds(4.5f);
-            b_IsGameOver = true;
             ShowGameOverUI();
         }
 
+        // Gradually increases aplha value of background image from 0 to 1.
         async private void SetGameOverPanelAlpha()
         {
             float newAlpha = 0;

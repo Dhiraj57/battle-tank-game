@@ -6,6 +6,7 @@ namespace AchievementSO
     [CreateAssetMenu(fileName = "BulletsFiredAchievementSO", menuName = "ScriptableObject/Achievement/NewBulletsFiredAchievementSO")]
     public class BulletsFiredAchievementSO : ScriptableObject
     {
+        // To create number of achievements.
         public AchievementType[] achievements;
 
         [Serializable]

@@ -4,23 +4,24 @@ using UnityEngine.UI;
 using PlayerTankServices;
 using GlobalServices;
 using GameplayServices;
-using System.Collections.Generic;
 
 namespace EnemyTankServices
 {
+    // Script is present on visual instance of enemy tank.
     public class EnemyTankView : MonoBehaviour, IDamagable
     {
         public NavMeshAgent navAgent;
         public Transform turret;
 
-        public Transform fireTransform;
-        public LayerMask playerLayerMask;
-        public LayerMask groundLayerMask;
-        public GameObject explosionEffectPrefab;
+        public Transform fireTransform; // Bullet spawn position.
+        public LayerMask playerLayerMask; // For player detection.
+        public LayerMask groundLayerMask; // For ground detection.
 
-        public EnemyPatrollingState patrollingState;
-        public EnemyChasingState chasingState;
-        public EnemyAttackingState attackingState;
+        public GameObject explosionEffectPrefab; // Explosion effect particle system prefab.
+
+        public EnemyPatrollingState patrollingState; // Patrolling behaviour script.
+        public EnemyChasingState chasingState; // Chasing behaviour script.
+        public EnemyAttackingState attackingState; // Attacking behaviour script.
 
         [SerializeField] private EnemyState initialState;
         [HideInInspector] public EnemyState activeState;
@@ -30,7 +31,7 @@ namespace EnemyTankServices
         public Slider healthSlider;
         public Image fillImage;
 
-        [HideInInspector] public Transform playerTransform;
+        [HideInInspector] public Transform playerTransform; // Reference to player position.
         [HideInInspector] public EnemyTankController tankController;
 
         [HideInInspector] public AudioSource explosionSound;
@@ -41,8 +42,11 @@ namespace EnemyTankServices
 
         private void Awake()
         {
+            // Instantiate the explosion prefab and get a reference to the particle system on it.
             explosionParticles = Instantiate(explosionEffectPrefab).GetComponent<ParticleSystem>();
             explosionSound = explosionParticles.GetComponent<AudioSource>();
+
+            // Disable the prefab so it can be activated when it's required.
             explosionParticles.gameObject.SetActive(false);
         }
 
@@ -50,6 +54,7 @@ namespace EnemyTankServices
         {
             tankController.SetHealthUI();
         
+            // If player is spawnned, we take reference of player transform.
             if(PlayerTankService.Instance.playerTankView)
             {
                 playerTransform = PlayerTankService.Instance.playerTankView.transform;
@@ -59,6 +64,7 @@ namespace EnemyTankServices
             SetEnemyTankColor();
             InitializeState();
 
+            // Add's reference of tank position in camera targets list.
             CameraController.Instance.AddCameraTargetPosition(this.transform);
         }
 
@@ -67,6 +73,7 @@ namespace EnemyTankServices
             tankController.UpdateTankController();
         }
 
+        // To set initial state of enemy tank.
         private void InitializeState()
         {
             switch (initialState)
@@ -95,11 +102,13 @@ namespace EnemyTankServices
             currentState.OnStateEnter();
         }
 
+        // Returns random launch force value between minimum and maximum lauch force.
         public float GetRandomLaunchForce()
         {
             return Random.Range(tankController.tankModel.minLaunchForce, tankController.tankModel.maxLaunchForce);
         }
 
+        // Implementation of IDamagable interface. 
         public void TakeDamage(int damage)
         {
             tankController.TakeDamage(damage);
@@ -107,10 +116,12 @@ namespace EnemyTankServices
 
         public void Death()
         {
+            // Removes reference of tank position in camera targets list.
             CameraController.Instance.RemoveCameraTargetPosition(this.transform);
             Destroy(gameObject);
         }
 
+        // Sets material color of all child mesh renderers.
         public void SetEnemyTankColor()
         {
             MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();

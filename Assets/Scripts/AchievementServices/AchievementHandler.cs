@@ -6,10 +6,13 @@ using UnityEngine;
 
 namespace AchievementServices
 {
+    // Handles achievement unlocking and all achievement related data.
     public class AchievementHandler : MonoSingletonGeneric<AchievementHandler>
     {
+        // Reference to achievement scriptable object.
         [SerializeField] private AchievementHolder achievementSOList;
 
+        // Variables to store current achievement level reached.
         private int currentBulletFiredAchivementLevel;
         private int currentEnemiesKilledAchievementLevel;
         private int currentWavesSurvivedAchievementLevel;
@@ -21,12 +24,15 @@ namespace AchievementServices
             currentWavesSurvivedAchievementLevel = PlayerPrefs.GetInt("currentWavesSurvivedAchievementLevel", 0);
         }
 
+        // Unlocks bullet fire achievements if required condition is satisfied.
         public void CheckForBulletFiredAchievement()
         {
+            // Loops through all available achievements.
             for(int i=0; i < achievementSOList.bulletsFiredAchievementSO.achievements.Length; i++)
             {
                 if (i != currentBulletFiredAchivementLevel) continue;
 
+                // Checks if required condition is satisfied to unlock achievement.
                 if(PlayerTankService.Instance.GetTankController().tankModel.bulletsFired == achievementSOList.bulletsFiredAchievementSO.achievements[i].requirement)
                 {
                     UnlockAchievement(achievementSOList.bulletsFiredAchievementSO.achievements[i].name, achievementSOList.bulletsFiredAchievementSO.achievements[i].info);
@@ -37,6 +43,7 @@ namespace AchievementServices
             }
         }
 
+        // Unlocks enemies killed achievements if required condition is satisfied.
         public void CheckForEnemiesKilledAchievement()
         {
             for(int i=0; i < achievementSOList.enemiesKilledAchievementSO.achievements.Length; i++)
@@ -53,6 +60,7 @@ namespace AchievementServices
             }
         }
 
+        // Unlocks wave survived achievements if required condition is satisfied.
         public void CheckForWavesSurvivedAvhievement()
         {
             for(int i=0; i < achievementSOList.waveSurvivedAchievementSO.achievements.Length; i++)
@@ -69,6 +77,7 @@ namespace AchievementServices
             }
         }
 
+        // Displays unlocked achievement.
         private void UnlockAchievement(string achievementName, string achievementInfo)
         {
             UIHandler.Instance.ShowAchievementUnlocked(achievementName, achievementInfo, 3f);

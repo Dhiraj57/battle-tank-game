@@ -2,15 +2,21 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class LongButtonClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+namespace UIServices
 {
-    public void OnPointerDown(PointerEventData eventData)
+    // Calls event based on current state of button.
+    public class LongButtonClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
-        EventService.Instance.InvokeOnFireButtonPressedEvent();
-    }
+        // Calls when button is pressed.
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            EventService.Instance.InvokeOnFireButtonPressedEvent();
+        }
 
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        EventService.Instance.InvokeOnFireButtonReleasedEvent();
+        // Calls when button is released.
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            EventService.Instance.InvokeOnFireButtonReleasedEvent();
+        }
     }
 }

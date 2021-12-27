@@ -1,20 +1,26 @@
 ﻿using EnemySO;
+using GameplayServices;
 using GlobalServices;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace EnemyTankServices
 {
+    // Handles spawning of enemy tank and communication of enemy tank service with other services.
     public class EnemyTankService : MonoSingletonGeneric<EnemyTankService>
     {
-        public EnemySOList enemyTankList;
+        public EnemySOList enemyTankList; // Enemy tank scriptable objects list.
         public EnemyTankView enemyTankView;
 
+        // Stores controllers of all active enemy tanks in the scene.
         [HideInInspector] public List<EnemyTankController> enemyTanks = new List<EnemyTankController>();
+        
         private EnemyType enemyTankType;
 
+        // Spawns specified type of enemy tank and returns tank controller. 
         public EnemyTankController CreateEnemyTank(EnemyType tanktype)
         {
+            // To search for sciptable object which holds data of specified enemy tank.
             foreach (EnemyScriptableObject tank in enemyTankList.enemies)
             {
                 if (tank.enemyType == enemyTankType)
@@ -28,6 +34,7 @@ namespace EnemyTankServices
             return null;
         }
 
+        // Removes specified tank controller from the tank controller list. 
         public void DestroyEnemy(EnemyTankController enemy)
         {
             for (int i = 0; i < enemyTanks.Count; i++)
@@ -39,12 +46,14 @@ namespace EnemyTankServices
                 }
             }
 
+            // If no enemy tank is present in the scene we start next wave.
             if (enemyTanks.Count == 0)
             {
                 WaveManager.Instance.SpawnWave();
             }
         }
 
+        // Disables all the enemy tanks from tank controller list when the game is paused.
         public void TurnOFFEnemies()
         {
             for (int i = 0; i < enemyTanks.Count; i++)
@@ -56,6 +65,7 @@ namespace EnemyTankServices
             }
         }
 
+        // Enables all the enemy tanks from tank controller list when the game is resumed.
         public void TurnONEnemies()
         {
             for (int i = 0; i < enemyTanks.Count; i++)

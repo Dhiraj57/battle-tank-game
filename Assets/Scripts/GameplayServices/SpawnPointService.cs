@@ -3,15 +3,19 @@ using UnityEngine;
 
 namespace GameplayServices
 {
+    // To get random spawn transform for tanks.
     public class SpawnPointService : MonoSingletonGeneric<SpawnPointService>
     {
+        // Player tank spawn transform.
         [SerializeField] private Transform playerSpawnPoint;
 
+        // Enemy tank spawn transforms.
         [SerializeField] private Transform[] quarter1 = new Transform[4];
         [SerializeField] private Transform[] quarter2 = new Transform[4];
         [SerializeField] private Transform[] quarter3 = new Transform[4];
         [SerializeField] private Transform[] quarter4 = new Transform[4];
 
+        // Returns random spawn transform.
         public Transform GetRandomSpawnPoint()
         {
             int quarterNumber = Random.Range(1, 4);

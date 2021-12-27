@@ -1,92 +1,59 @@
 ﻿using GlobalServices;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using SFXServices;
 using EnemyTankServices;
 using PlayerTankServices;
 using UIServices;
 
 namespace GameplayServices
 {
+    // Handles saved data and pause/resume state of game.
     public class GameManager : MonoSingletonGeneric<GameManager>
     {
-        [HideInInspector] public bool gamePaused = false;
-        [HideInInspector] public bool gameOver = false;
-
-        private string currentPlayerName;
-        private string recordHolderName;
-        private int highScore;
-        private int currentWave;
-
-
-        protected override void Awake()
-        {
-            base.Awake();
-        }
-
         private void Start()
         {
             EventService.Instance.InvokeOnGameStartedEvent();
-            currentWave = 0;
-            highScore = PlayerPrefs.GetInt("highScore", PlayerPrefs.GetInt("highScore"));
-            recordHolderName = PlayerPrefs.GetString("recordHolderName", PlayerPrefs.GetString("recordHolderName"));
-        }   
-
-        public void RestartGame()
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            EventService.Instance.OnEnemyDeath += CheckForHighScore;
         }
 
+        private void OnDisable()
+        {
+            EventService.Instance.OnEnemyDeath -= CheckForHighScore;
+        }
+
+        // Resets all player prefs data.
         public void ResetData()
         {
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
         }
 
+        // Disables all player and enemy tanks.
         public void PasueGame()
         {
             EventService.Instance.InvokeOnGamePausedEvent();
-            gamePaused = true;
-            SFXHandler.Instance.TurnOffSoundsExceptUI();
             PlayerTankService.Instance.TurnOFFTanks();
             EnemyTankService.Instance.TurnOFFEnemies();
         }
 
+        // Enables all player and enemy tanks.
         public void ResumeGame()
         {
             EventService.Instance.InvokeOnGameResumedEvent();
-            gamePaused = false;
-            SFXHandler.Instance.TurnOnSounds();
             PlayerTankService.Instance.TurnONTanks();
             EnemyTankService.Instance.TurnONEnemies();
         }
 
-        public void SetCurrentPlayerName(string name)
-        {
-            currentPlayerName = name;
-            PlayerPrefs.SetString("currentPlayerName", currentPlayerName);
-        }
-
         public void CheckForHighScore()
         {
-            if(UIHandler.Instance.GetCurrentScore() > highScore)
+            if(UIHandler.Instance.GetCurrentScore() > GetHighScore())
             {
                 PlayerPrefs.SetInt("highScore", UIHandler.Instance.GetCurrentScore());
-                PlayerPrefs.SetString("recordHolderName", currentPlayerName);
-
-                recordHolderName = currentPlayerName;
-                highScore = UIHandler.Instance.GetCurrentScore();
             }
         }
 
-        public string GetHighScore()
+        public int GetHighScore()
         {
-            return PlayerPrefs.GetInt("highScore").ToString();
-        }
-
-        public string GetRecordHolderName()
-        {
-            return PlayerPrefs.GetString("recordHolderName");
+            return PlayerPrefs.GetInt("highScore", 0);
         }
     }
 }

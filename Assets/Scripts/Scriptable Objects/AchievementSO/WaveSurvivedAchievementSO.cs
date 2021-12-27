@@ -6,6 +6,7 @@ namespace AchievementSO
     [CreateAssetMenu(fileName = "WaveSurvivedAchievementSO", menuName = "ScriptableObject/Achievement/NewWaveSurvivedAchievementSO")]
     public class WaveSurvivedAchievementSO : ScriptableObject
     {
+        // To create number of achievements.
         public AchievementType[] achievements;
 
         [Serializable]

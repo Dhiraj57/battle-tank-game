@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace BulletServices
 {
+    // Script is present on visual instance of bullet.
     [RequireComponent(typeof(Rigidbody))]
     public class BulletView : MonoBehaviour
     {
         private BulletController bulletController;
 
         public ParticleSystem explosionParticles;
-        public AudioSource explosionSound;
+        public AudioSource explosionSound;    
 
-        public LayerMask layerMask;     
-
+        // To set bullet controller reference in bullet view.
         public void SetBulletController(BulletController controller)
         {
             bulletController = controller;

@@ -4,43 +4,18 @@ using UnityEngine;
 
 namespace BulletServices
 { 
+    // Handles spawning of bullet and communication of bullet service with other services.
     public class BulletService : MonoSingletonGeneric<BulletService>
     {
         public BulletSOList bulletList;
-        private bool b_IsPaused;
 
-        private void Start()
-        {
-            b_IsPaused = false;
-            EventService.Instance.OnGamePaused += GamePaused;
-            EventService.Instance.OnGameResumed += GameResumed;
-        }
-
-        private void OnDisable()
-        {
-            EventService.Instance.OnGamePaused -= GamePaused;
-            EventService.Instance.OnGameResumed -= GameResumed;
-        }
-
-        private void GamePaused()
-        {
-            b_IsPaused = true;
-        }
-
-        private void GameResumed()
-        {
-            b_IsPaused = false;
-        }
-
+        // To fire bullet. // Returns bullet controller.
         public BulletController FireBullet(BulletType bulletType, Transform bulletTransform, float launchForce)
         {
-            if(!b_IsPaused)
-            {
-                return CreateBullet(bulletType, bulletTransform, launchForce);
-            }
-            return null;
+            return CreateBullet(bulletType, bulletTransform, launchForce);
         }
 
+        // Spawns specified type of bullet at given position and sets its velocity as per launch force. 
         private BulletController CreateBullet(BulletType bulletType, Transform bulletTransform, float launchForce)
         {
             foreach (BulletScriptableObject bullet in bulletList.bulletTypes)

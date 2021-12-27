@@ -735,7 +735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turret: {fileID: 4598058016147370311}
-  explosionEffectPrefab: {fileID: 151086, guid: ee49a9a8678ecf8468eb488e1ac8d42b,
+  explosionEffectPrefab: {fileID: 151086, guid: ee69fc81f21d0cb49adb88ddf4dff002,
     type: 3}
   healthSlider: {fileID: 2318713495889198018}
   fillImage: {fileID: 2077315720967889186}
@@ -790,7 +790,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.4
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 1
   Mute: 0

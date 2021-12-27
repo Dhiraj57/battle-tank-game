@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace EnemyTankServices
 {
+    // Holds all the data related to enemy tank.
     public class EnemyTankModel
     {
         public int health { get; set; }
@@ -13,25 +14,25 @@ namespace EnemyTankServices
         public float rotationSpeed { get; }
         public float turretRotationRate { get; }
 
-        public float minLaunchForce { get; }
-        public float maxLaunchForce { get; }
+        public float minLaunchForce { get; } // Minimum bullet launch force.
+        public float maxLaunchForce { get; } // Maximum bullet launch force.
 
         public bool b_IsDead { get; set; }
-        public bool b_IsFired { get; set; }
+        public bool b_IsFired { get; set; } 
 
         public Color fullHealthColor { get; }
         public Color zeroHealthColor { get; }
 
-        public EnemyType enemyType { get; }
-        public BulletType bulletType { get; set; }
+        public EnemyType enemyType { get; } // Type of enemy tank.
+        public BulletType bulletType { get; set; } // Type of bullet fired.
 
         // Patrolling
-        public Vector3 walkPoint { get; set; }
+        public Vector3 walkPoint { get; set; } // Desired position of enemy tank.
         public float walkPointRange { get; set; }
-        public bool b_IsWalkPoint { get; set; }
+        public bool b_IsWalkPoint { get; set; } // Is walk point selected.
 
         // Attacking
-        public float fireRate { get; set; }
+        public float fireRate { get; set; } // Bullet fire rate.
 
         // States
         public float patrollingRange { get; set; }

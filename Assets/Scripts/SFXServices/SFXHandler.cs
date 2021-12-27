@@ -1,63 +1,82 @@
 ﻿using GlobalServices;
+using System;
 using UnityEngine;
 
 namespace SFXServices
 {
-    public class SFXHandler : MonoSingletonGeneric<SFXHandler>
+    public class SFXHandler : MonoBehaviour
     {
-        public AudioSource audioSource1;
-        public AudioSource audioSource2;
-        public AudioSource enemyTrack;
+        // Array that holds sound type and respective audio clip.
+        public SoundType[] sounds;
 
-        // For fire / destruction sound
-        public void PlayFireSoundTrack(AudioClip audioClip, float volume, int priority, bool overrideSound = true)
+        public AudioSource soundEffect; // Audio source to play sound effects.
+        public AudioSource soundMusic; // Audio source to play background music.
+
+        // Implementation of singleton design pattern.
+        private static SFXHandler instance;
+        public static SFXHandler Instance { get { return instance; } }
+
+        private void Awake()
         {
-            if ((audioSource1.clip != audioClip) || (audioSource1.isPlaying && overrideSound))
+            if (instance == null)
             {
-                audioSource1.clip = audioClip;
-                audioSource1.volume = volume;
-                audioSource1.priority = priority;
-                audioSource1.Play();
+                instance = this;
+                DontDestroyOnLoad(gameObject);
             }
-            else return;
-        }
-
-        public void PlayMovingSoundTrack(AudioClip audioClip, float volume, int priority, bool overrideSound = true)
-        {
-            if ((audioSource2.clip != audioClip) || (audioSource2.isPlaying && overrideSound))
+            else
             {
-                audioSource2.clip = audioClip;
-                audioSource2.volume = volume;
-                audioSource2.priority = priority;
-                audioSource2.Play();
+                Destroy(gameObject);
             }
-            else return;
         }
 
-        public void PlayEnemySoundTrack(AudioClip audioClip, float volume, int priority, bool overrideSound = true)
+        private void Start()
         {
-            if ((enemyTrack.clip != audioClip) || (enemyTrack.isPlaying && overrideSound))
+            // Play music on start.
+            PlayMusic(SFXHandler.Sounds.Music);
+        }
+
+        // For background music.
+        public void PlayMusic(Sounds sound)
+        {
+            AudioClip clip = GetSoundClip(sound);
+            if (clip != null)
             {
-                enemyTrack.clip = audioClip;
-                enemyTrack.volume = volume;
-                enemyTrack.priority = priority;
-                enemyTrack.Play();
+                soundMusic.clip = clip;
+                soundMusic.Play();
             }
-            else return;
         }
 
-        public void TurnOffSoundsExceptUI()
+        // For sound effects.
+        public void Play(Sounds sound)
         {
-            audioSource1.enabled = false;
-            audioSource2.enabled = false;
-            enemyTrack.enabled = false;
+            AudioClip clip = GetSoundClip(sound);
+            if (clip != null)
+            {
+                soundEffect.PlayOneShot(clip);
+            }
         }
 
-        public void TurnOnSounds()
+        // Returns audio clip based on sound effect selected.
+        private AudioClip GetSoundClip(Sounds sound)
         {
-            audioSource1.enabled = true;
-            audioSource2.enabled = true;
-            enemyTrack.enabled = true;
+            SoundType returnSound = Array.Find(sounds, item => item.soundType == sound);
+            return returnSound.soundClip;
+        }
+
+        // Class to hold sound effect type and respective audio clip.
+        [Serializable]
+        public class SoundType
+        {
+            public Sounds soundType;
+            public AudioClip soundClip;
+        }
+
+        // Enum to select sound effect.
+        public enum Sounds
+        {
+            ButtonClick,
+            SlowMotion,
+            Music,
         }
     }
 }
